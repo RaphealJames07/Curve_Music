@@ -1,13 +1,10 @@
-//music//
+///// carousels/////////////////
 
-//music//
-
-// Carousel images
 let Images = ["./files/images/cover1.png", "./files/images/cover7.png", "./files/images/cover8.png", "./files/images/cover9.png", "./files/images/cover10.png",]
 
 let count = 0
 
-let slide = document.getElementById("ImageSlide")
+let slide = document.getElementById("ImageSlide");
 
 setInterval(()=>{
     slide.src = Images[count]
@@ -17,98 +14,81 @@ setInterval(()=>{
     }
 },2000)
 
-//End of Carousel//
 
-// // Navigations//
+/////////////////////navigations////////////
 
-//Toggle to music Player
+////////////toggling music player
+
 const musicPlayerSection = document.querySelector('.music-player-section');
 
-
-
 musicPlayerSection.addEventListener("dblclick",()=>{
-        musicPlayerSection.classList.add('active');
-    }  
+    musicPlayerSection.classList.add('active');
+}  
 )
 
-// Back From Music Player//
+/////// back from music player
 
 const backToHomeBtn = document.querySelector('.music-player-section .back-btn');
 
-backToHomeBtn.addEventListener('click', () =>{
+backToHomeBtn.addEventListener('click', () => {
     musicPlayerSection.classList.remove('active');
 })
 
-// Toggle Playlist //
+//////// access playlist
 
-const playListSection = document.querySelector('.playlist');
-const backToMusicPlayer = document.querySelector('.music-player-section .switch');
+const playlistSection = document.querySelector('.playlist');
+const navBtn = document.querySelector('.music-player-section .nav-btn');
 
- backToMusicPlayer.addEventListener('click', () =>{
-    playListSection.classList.add('active');
- }
- )
+navBtn.addEventListener('click', () => {
+    playlistSection.classList.add('active');
+})
 
- //Back From playlist //
+////////// back from playlist to music player
 
- const playListSectionbtn = document.querySelector('.playlist .playlist-back-btn');
- playListSectionbtn.addEventListener('click', () =>{
-    playListSection.classList.remove('active');
- })
+const backToMusicPlayer = document.querySelector('.playlist .playlist-back-btn');
 
-//  //End of Navigation //
+backToMusicPlayer.addEventListener('click', () => {
+    playlistSection.classList.remove('active');
+})
 
-//  //Music & Controls//
+//////navigation done ////////////////
 
- let currentMusic = 0;
+/////// music
 
- let music = document.querySelector('#audio-source');
- let seekBar = document.querySelector('.music-seek-bar');
- let songName = document.querySelector('.current-song-name');
- let artistName = document.querySelector('.artist-name');
- let coverImage = document.querySelector('.cover');
- let currentMusicTime = document.querySelector('.current-time');
- let musicDuration = document.querySelector('.duration');
+let currentMusic = 0;
 
- //Buttons For Controls
- const repeatBtn = document.querySelector('.repeat')
- const fowardBtn = document.querySelector('.forward');
- const backwardBtn = document.querySelector('.backward');
- const playBtn = document.querySelector('.play');
- const pauseBtn = document.querySelector('.pause');
- const shuffleBtn = document.querySelector('.shuffle'); 
- const volumeSlider = document.querySelector('.volume-slider');
+const music = document.querySelector('#audio-source');
 
- //Playbtn Event Click
- playBtn.addEventListener('click', () =>{
-    
-    playBtn.classList.remove('active');
-    playBtn.classList.add('Noactive');
-    pauseBtn.classList.add('active');
-    music.pause()
- })
+const seekBar = document.querySelector('.music-seek-bar');
+const songName = document.querySelector('.current-song-name');
+const artistName = document.querySelector('.artist-name');
+const coverImage = document.querySelector('.cover');
+const currentMusicTime = document.querySelector('.current-time');
+const musicDuration = document.querySelector('.duration');
 
- //PauseBtn Event Click
+const queue = [...document.querySelectorAll('.queue')];
 
- pauseBtn.addEventListener('click', () =>{
-    music.pause()
-    pauseBtn.classList.remove('active');
-    pauseBtn.classList.add('Noactive');
-    playBtn.classList.add('active');
-    music.play()
- })
+// select all buttons here
 
+const forwardBtn = document.querySelector('.forward');
+const backwardBtn = document.querySelector('.backward');
+const playBtn = document.querySelector('.play');
+const pauseBtn = document.querySelector('.pause');
+const repeatBtn = document.querySelector('.repeat');
+const repeatOneBtn = document.querySelector('.repeat1');
+const shuffleBtn = document.querySelector('.shuffle');
+const playAllBtn = document.querySelector('.playall');
+const volumeBtn = document.querySelector('span.fa-volume-up');
+const volumeSlider = document.querySelector('.volume-slider');
 
+// funtion for setting up music
 
-//  //set music Function //
-
-const  setMusic = (i)=>{
+const setMusic = (i) => {
     seekBar.value = 0;
     let song = songs[i];
     currentMusic = i;
-    
-    music.src = song.path;
 
+    music.src = song.path;
     songName.innerHTML = song.name;
     artistName.innerHTML = song.artist;
     coverImage.src = song.cover;
@@ -116,50 +96,51 @@ const  setMusic = (i)=>{
     setTimeout(() => {
         seekBar.max = music.duration;
         musicDuration.innerHTML = formatTime(music.duration);
-    },300);
+    }, 300);
     currentMusicTime.innerHTML = '00 : 00';
+    queue.forEach(item => item.classList.remove('active'));
+    queue[currentMusic].classList.add('active');
 }
+
 setMusic(0);
 
+// format duration in 00 : 00 format
 
-//  //format duration in 00:00 format//
-
- const formatTime = (time) =>{
+const formatTime = (time) => {
     let min = Math.floor(time / 60);
-    if (min < 10){
+    if(min < 10){
         min = `0` + min;
     }
 
     let sec = Math.floor(time % 60);
-    if (sec < 10){
+    if(sec < 10){
         sec = `0` + sec;
     }
+
     return `${min} : ${sec}`;
- }
+}
 
+// playBtn click event
 
-// seekBar Events //
-setInterval(( ) => {
-    seekBar.value = music.currentTime;
-    currentMusicTime.innerHTML = formatTime(music.currentMusicTime)
-    if (Math.floor(music.currentTime) == Math.floor(seekBar.max )){
-        if (repeatBtn.className.includes('active')){
-            setMusic(currentMusic);
-            playBtn.click();
-        } else{
-            fowardBtn.click()
-        }
-    }
-},500)
-
-seekBar.addEventListener('change', () =>{
-    music.currentTime = seekBar.value;
+playBtn.addEventListener('click', () => {
+    music.play();
+    playBtn.classList.remove('active');
+    pauseBtn.classList.add('active');
 })
 
-// // foward btn
 
-fowardBtn.addEventListener('click', () => {
-    if (currentMusic >= songs.length - 1){
+// pauseBtn click event
+
+pauseBtn.addEventListener('click', () => {
+    music.pause();
+    pauseBtn.classList.remove('active');
+    playBtn.classList.add('active');
+})
+
+//  forward btn
+
+forwardBtn.addEventListener('click', () => {
+    if(currentMusic >= songs.length - 1){
         currentMusic = 0;
     } else{
         currentMusic++;
@@ -171,7 +152,7 @@ fowardBtn.addEventListener('click', () => {
 // backward btn
 
 backwardBtn.addEventListener('click', () => {
-    if (currentMusic <= 0){
+    if(currentMusic <= 0){
         currentMusic = songs.length - 1;
     } else{
         currentMusic--;
@@ -180,7 +161,69 @@ backwardBtn.addEventListener('click', () => {
     playBtn.click();
 })
 
-//repeat btn//
+// seekbar events
+
+setInterval(() => {
+    seekBar.value = music.currentTime;
+    currentMusicTime.innerHTML = formatTime(music.currentTime);
+    if(Math.floor(music.currentTime) == Math.floor(seekBar.max)){
+        if(repeatOneBtn.className.includes('active')){
+            setMusic(currentMusic);
+            playBtn.click();
+        } else{
+            forwardBtn.click();
+        }
+        if (shuffleBtn.className.includes('active')){
+            setMusic(shuffle);
+            playBtn.click();
+        } else{
+            fowardBtn.click();
+        }
+    }
+}, 500)
+
+seekBar.addEventListener('change', () => {
+    music.currentTime = seekBar.value;
+})
+
+// repeat button
+
 repeatBtn.addEventListener('click', () => {
-    repeatBtn.classList.toggle('active')
+    repeatBtn.classList.remove('active');
+    repeatOneBtn.classList.add('active')
+})
+
+//Repeatone button
+repeatOneBtn.addEventListener('click', () => {
+    repeatOneBtn.classList.remove('active')
+    repeatBtn.classList.add('active');
+})
+
+//shuffle button
+shuffleBtn.addEventListener('click', () => {
+    shuffleBtn.classList.remove('active')
+    playAllBtn.classList.add('active')
+})
+
+
+
+// playall button
+playAllBtn.addEventListener('click', () => {
+    playAllBtn.classList.remove('active')
+    shuffleBtn.classList.add('active')
+})
+
+// volume section
+
+volumeSlider.addEventListener('input', () => {
+    music.volume = volumeSlider.value;
+})
+
+//queue and list
+
+queue.forEach((item, i) => {
+    item.addEventListener('click', () => {
+        setMusic(i);
+        playBtn.click();
+    })
 })
